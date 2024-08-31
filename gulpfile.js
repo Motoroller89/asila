@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var browserSync = require('browser-sync').create();
 var cleanCSS = require('gulp-clean-css');
 var htmlmin = require('gulp-htmlmin');
 var tinypng = require('gulp-tinypng-compress');
@@ -48,6 +49,15 @@ gulp.task('tinypng', function (done) {
     done();
 });
 
-gulp.task('default', gulp.parallel('minify-css', 'move-js', 'htmlmin', 'fonts', 'tinypng', function (done) {
-    done();
-}))
+gulp.task('watch', function() {
+    browserSync.init({
+      server: {
+        baseDir: './dist'
+      }
+    });
+    gulp.watch('src/**/*.*', gulp.series('default')).on('change', browserSync.reload);
+  });
+  
+  gulp.task('default', gulp.parallel('minify-css', 'move-js', 'htmlmin', 'fonts', 'tinypng', 'watch', function (done) {
+      done();
+  }))
